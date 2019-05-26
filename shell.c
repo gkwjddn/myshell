@@ -51,8 +51,15 @@ int main(void)
             printf("exit을 입력받아 Shell을 종료하겠습니다. \n");
             break;
         }
-
-
+        //추가기능구현 2: help를 입력받으면 구현한 기능들을 어떻게 사용하는지 알려줍니다. 
+        if(strcmp(s, "help\n") == 0)
+        {
+            printf("\n쉘을 만드는 프로젝트입니다.\n");
+            printf("exit을 입력하시면 쉘이 종료됩니다.\n");
+            printf("여러 파일을 입력하시려면 a; b; c 식으로 입력해주세요.\n");
+            printf("자동차IT융합학과 20153440 하정우\n");
+            continue;
+        }
 
 
         
