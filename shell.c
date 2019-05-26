@@ -41,7 +41,7 @@ int main(void)
         char *s;
         int len;
         int num=0;
-        char ss[10][30];
+        char cmd[10][10];
 
         //필수구현요소 3: username@hostname $ 형태로 쉘 기본입력창을 띄운다.
         printf("\n%s@%s $ ", getpwuid(getuid())->pw_name, hostname);
@@ -61,14 +61,21 @@ int main(void)
             if(s[i] ==';')
                 num++;
         }
-
+        printf("%d개의 프로그램을 실행하겠습니다.\n", num+1);
+        num=-0;
         char *ptr = strtok(s, "; ");
         while(ptr != NULL)
         {
             printf(" %s \n", ptr);
-            strcpy(ss[num], ptr);
+            strcpy(cmd[num], ptr);
             num++;
             ptr = strtok(NULL, "; ");
+        }
+        for(int i=0; i<num; i++)
+        {
+            s = cmd[i];
+            strcpy(command, s);
+            len = strlen(command);
         }
 
 
