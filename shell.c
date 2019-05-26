@@ -40,9 +40,8 @@ int main(void)
     while (true) {
         char *s;
         int len;
-        char s_full[10][10];
-        //num : 입력받은 프로그램 갯수
-        int num = 0;
+        int num=0;
+        char ss[10][30];
 
         //필수구현요소 3: username@hostname $ 형태로 쉘 기본입력창을 띄운다.
         printf("\n%s@%s $ ", getpwuid(getuid())->pw_name, hostname);
@@ -59,16 +58,15 @@ int main(void)
         //필수구현요소 2: a; b; c 와 같이 입력시 a, b, c 세개의 프로그램 차례대로 실행
         for(int i=0; i<len; i++)
         {
-            if(s[i] == ';')
+            if(s[i] ==';')
                 num++;
         }
 
         char *ptr = strtok(s, "; ");
-
         while(ptr != NULL)
         {
-            printf(" %s \n" , ptr);
-            strcpy(s_full[num], ptr);
+            printf(" %s \n", ptr);
+            strcpy(ss[num], ptr);
             num++;
             ptr = strtok(NULL, "; ");
         }
