@@ -47,35 +47,14 @@ int main(void)
         printf("\n%s@%s $ ", getpwuid(getuid())->pw_name, hostname);
         //s에 input을 받으며 input이 없으면 이 코드는 더이상 루프를 돌지 않고 input을 계속 기다린다.
         s = fgets(command, MAX_LEN_LINE, stdin);
+        len = strlen(command);
+
 
         //필수구현요소 1: exit을 입력받으면 내가 구현한 쉘은 종료된다.
         if(strcmp(s, "exit\n") == 0)
         {
             printf("exit을 입력받아 Shell을 종료하겠습니다. \n");
             break;
-        }
-
-        //필수구현요소 2: a; b; c 와 같이 입력시 a, b, c 세개의 프로그램 차례대로 실행
-        for(int i=0; i<len; i++)
-        {
-            if(s[i] ==';')
-                num++;
-        }
-        printf("%d개의 프로그램을 실행하겠습니다.\n", num+1);
-        num=-0;
-        char *ptr = strtok(s, "; ");
-        while(ptr != NULL)
-        {
-            printf(" %s \n", ptr);
-            strcpy(cmd[num], ptr);
-            num++;
-            ptr = strtok(NULL, "; ");
-        }
-        for(int i=0; i<num; i++)
-        {
-            s = cmd[i];
-            strcpy(command, s);
-            len = strlen(command);
         }
 
 
@@ -85,47 +64,72 @@ int main(void)
             printf("\n쉘을 만드는 프로젝트입니다.\n");
             printf("exit을 입력하시면 쉘이 종료됩니다.\n");
             printf("여러 파일을 입력하시려면 a; b; c 식으로 입력해주세요.\n");
+            printf("프로그램 갯수는 ;의 갯수+1로 계산합니다. 그러니 프로그램 1개를 실행할 때는 ;를 사용하지 마세요.\n");
             printf("자동차IT융합학과 20153440 하정우\n");
             continue;
         }
 
+        //필수구현요소 2: a; b; c 와 같이 입력시 a, b, c 세개의 프로그램 차례대로 실행
+        for(int i=0; i<len; i++)
+        {
+            if(s[i] == ';'){
+                num++;
+                }
+            }
+            printf("%d 개의 프로그램을 실행하겠습니다.\n", num+1);
+            num = 0;
+            char *ptr = strtok(s,"; ");
+            
+            while(ptr != NULL)
+            {
+                printf(" %s \n" ,ptr);
+                strcpy(cmd[num],ptr);
+                num++;
+                ptr = strtok(NULL,"; ");
+            }
+            for(int i=0; i<num; i++)
+            {
+                s = cmd[i];
+                strcpy(command,s);
+                len = strlen(command);
+            
+            
+            if (s == NULL) {
+                fprintf(stderr, "fgets failed\n");
+                exit(1);
+            }
+            
 
-        
-        if (s == NULL) {
-            fprintf(stderr, "fgets failed\n");
-            exit(1);
-        }
-        
-        len = strlen(command);
-        printf("%d\n", len);
-        if (command[len - 1] == '\n') {
-            command[len - 1] = '\0'; 
-        }
-        
-        printf("[%s]\n", command);
-      
-        pid = fork();
-        if (pid < 0) {
-            fprintf(stderr, "fork failed\n");
-            exit(1);
-        } 
-        if (pid != 0) {  /* parent */
-            cpid = waitpid(pid, &status, 0);
-            if (cpid != pid) {
-                fprintf(stderr, "waitpid failed\n");        
+            printf("%d\n", len);
+            if (command[len - 1] == '\n') {
+                command[len - 1] = '\0'; 
             }
-            printf("Child process terminated\n");
-            if (WIFEXITED(status)) {
-                printf("Exit status is %d\n", WEXITSTATUS(status)); 
+            
+            printf("[%s]\n", command);
+        
+            pid = fork();
+            if (pid < 0) {
+                fprintf(stderr, "fork failed\n");
+                exit(1);
+            } 
+            if (pid != 0) {  /* parent */
+                cpid = waitpid(pid, &status, 0);
+                if (cpid != pid) {
+                    fprintf(stderr, "waitpid failed\n");        
+                }
+                printf("Child process terminated\n");
+                if (WIFEXITED(status)) {
+                    printf("Exit status is %d\n", WEXITSTATUS(status)); 
+                }
             }
+            else {  /* child */
+                ret = execve(args[0], args, NULL);
+                if (ret < 0) {
+                    fprintf(stderr, "execve failed\n");   
+                    return 1;
+                }
+            } 
         }
-        else {  /* child */
-            ret = execve(args[0], args, NULL);
-            if (ret < 0) {
-                fprintf(stderr, "execve failed\n");   
-                return 1;
-            }
-        } 
     }
     return 0;
 }
