@@ -16,6 +16,7 @@ int main(void)
     char *args[] = {command, NULL};
     int ret, status;
     pid_t pid, cpid;
+
     
     //추가구현기능 1: 사용자 id로 사용자 정보를 구하기
     uid_t   user_id;
@@ -39,6 +40,9 @@ int main(void)
     while (true) {
         char *s;
         int len;
+        char s_full[10][10];
+        //num : 입력받은 프로그램 갯수
+        int num = 0;
 
         //필수구현요소 3: username@hostname $ 형태로 쉘 기본입력창을 띄운다.
         printf("\n%s@%s $ ", getpwuid(getuid())->pw_name, hostname);
@@ -51,6 +55,25 @@ int main(void)
             printf("exit을 입력받아 Shell을 종료하겠습니다. \n");
             break;
         }
+
+        //필수구현요소 2: a; b; c 와 같이 입력시 a, b, c 세개의 프로그램 차례대로 실행
+        for(int i=0; i<len; i++)
+        {
+            if(s[i] == ';')
+                num++;
+        }
+
+        char *ptr = strtok(s, "; ");
+
+        while(ptr != NULL)
+        {
+            printf(" %s \n" , ptr);
+            strcpy(s_full[num], ptr);
+            num++;
+            ptr = strtok(NULL, "; ");
+        }
+
+
         //추가기능구현 2: help를 입력받으면 구현한 기능들을 어떻게 사용하는지 알려줍니다. 
         if(strcmp(s, "help\n") == 0)
         {
